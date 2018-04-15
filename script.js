@@ -4,7 +4,7 @@ jQuery(function($) {
   var ctx = document.getElementById('canvas').getContext('2d');
 
   var grab = null, show_details = false, circles = [];
-  
+
   function reset() {
     circles = [{
       x: ctx.canvas.clientWidth / 2.0 - 100,
@@ -18,7 +18,7 @@ jQuery(function($) {
 
     return false;
   }
-  
+
   function draw_circles() {
     // draw circles
     $.each(circles, function(i, c) {
@@ -49,24 +49,15 @@ jQuery(function($) {
       y: circles[1].y - circles[0].y,
     }, mag_v0 = magnitude(v0);
 
-    if (show_details) {
-      ctx.beginPath();
-      ctx.moveTo(circles[0].x, circles[0].y);
-      ctx.lineTo(circles[0].x + v0.x, circles[0].y + v0.y);
-      ctx.strokeStyle = 'blue';
-      ctx.stroke();
-      ctx.strokeStyle = null;
-    }
-
-    // cache radiuses
-    var r0 = circles[0].r, 
+    // cache radii
+    var r0 = circles[0].r,
         r1 = circles[1].r;
 
     // calc d0, d1
     var d0 = 1.0 * r0/(r0 + r1) * (mag_v0 - (r0 + r1)),
         d1 = 1.0 * r1/(r0 + r1) * (mag_v0 - (r0 + r1));
 
-    // calculate c2 radius
+    // calc c2 radius
     var r2 = (2 * r0 * d0 + -2 * r1 * d1 + d0 * d0 + -d1 * d1) / (2.0 * (r0 - r1));
 
     // normalize v0
@@ -90,14 +81,6 @@ jQuery(function($) {
       y: circles[0].y + (r0 + r2) * n1.y,
     };
 
-    if (show_details) {
-      // draw tangent circle
-      ctx.beginPath();
-      ctx.arc(p2.x, p2.y, r2, 0, 2 * Math.PI);
-      ctx.strokeStyle = 'blue';
-      ctx.stroke();
-    }
-
     // calc n2
     var n2 = normalize({
       x: -(p2.x - (circles[0].x + n0.x * (r0 + d0))),
@@ -111,13 +94,38 @@ jQuery(function($) {
     };
 
     if (show_details) {
-      ctx.beginPath();
-      ctx.moveTo(p2.x, p2.y);
-      ctx.lineTo(p3.x, p3.y);
       ctx.strokeStyle = 'blue';
+
+      // start lines path
+      ctx.beginPath();
+
+      // draw line from p2 to p1
+      ctx.moveTo(p2.x, p2.y);
+      ctx.lineTo(circles[1].x, circles[1].y);
+
+      // draw line from p1 to p0
+      ctx.lineTo(circles[0].x, circles[0].y);
+
+      // draw line from p0 to p2
+      ctx.lineTo(p2.x, p2.y);
+
+      // draw line from p2 to p3
+      ctx.lineTo(p3.x, p3.y);
+
+      // stroke lines
+      ctx.setLineDash([2, 2]);
+      ctx.stroke();
+
+      // draw tangent circle
+      ctx.beginPath();
+      ctx.arc(p2.x, p2.y, r2, 0, 2 * Math.PI);
+
+      // stroke tangent circle
+      ctx.setLineDash([]);
       ctx.stroke();
     }
 
+    // draw p3
     ctx.beginPath();
     ctx.arc(p3.x, p3.y, 3, 0, 2 * Math.PI);
     ctx.fillStyle = 'red';
@@ -125,28 +133,34 @@ jQuery(function($) {
   }
 
   function draw() {
+    // clear canvas
     ctx.clearRect(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight);
 
+    // draw circles
     draw_circles();
+
+    // draw tangent circle and point
     draw_tangent_circle();
   }
 
   $('#canvas').mousemove(function(ev) {
     if (grab != null) {
+      // get event coords and selected circle
       var x = ev.offsetX, y = ev.offsetY,
           c = circles[grab.i];
 
       if (grab.move) {
-        // move
+        // move circle
         c.x = x;
         c.y = y;
       } else {
-        // resize
+        // resize circle
         c.r = Math.sqrt(
           (c.x - x) * (c.x - x) + (c.y - y) * (c.y - y)
         );
       }
 
+      // refresh canvas
       draw();
     }
 
@@ -174,7 +188,10 @@ jQuery(function($) {
     return false;
   }).mouseup(function(ev) {
     if (grab != null) {
+      // clear grab
       grab = null;
+
+      // refresh
       draw();
     }
 
@@ -183,16 +200,24 @@ jQuery(function($) {
   });
 
   $('#toggle-details').click(function() {
+    // toggle show details
     show_details = !show_details;
+
+    // refresh canvas
     draw();
 
+    // stop event
     return false;
   });
 
   $('#reset').click(function() {
+    // reset circles
     reset();
+
+    // refresh canvas
     draw()
 
+    // stop event
     return false;
   }).click();
 });
