@@ -1,0 +1,15 @@
+body {
+  background: white;
+  margin: 16px 24px;
+  font-family: verdana, helvetica, arial, sans-serif;
+  font-size: 10pt;
+}
+
+#canvas {
+  border: 1px solid black;
+}
+
+img {
+  display: block;
+	margin: auto;
+}

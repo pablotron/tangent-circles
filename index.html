@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang='en-US'>
+  <head>
+    <meta charset='utf-8'/>
+    <title>Tangent Circles</title>
+    <link rel='stylesheet' type='text/css' href='style.css'/>
+<script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+		tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+	});
+</script>
+
+
+    <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+
+  <body>
+    <h1>Tangent Circles</h1>
+
+		<h2>Demo</h2>
+
+    <canvas
+      id='canvas'
+      width='800'
+      height='400'
+    ></canvas>
+
+    <p>
+      <button
+        id='reset'
+        title='reset buttons'
+      >
+        Reset Circles
+      </button>
+
+			<button
+				id='toggle-details'
+				title='Show/hide details.'
+			>
+				Toggle Details
+			</button>
+    </p>
+
+		<ul>
+			<li>Drag the center of a circle to move.</li>
+			<li>Drag the edge of a circle to resize.</li>
+		</ul>
+
+		<h2>Math</h2>
+
+		<p>
+			<img src='math.svg' width='600'/>
+		</p>
+		
+		<p>
+			$$
+	\begin{align*}
+		\vec{v}_0 &amp;= p_1 - p_0 &amp;
+		\text{calc v0} \\
+	\\
+		d_0 &amp;= \frac{r_0}{r_0 + r_1} * (\|\vec{v}_0\| - (r_0 + r_1)) \\
+		d_1 &amp;= \frac{r_1}{r_0 + r_1} * (\|\vec{v}_0\| - (r_0 + r_1)) \\
+	\\
+		a^2 + b^2 &amp;= c^2 \\
+		b^2 &amp;= c^2 - a^2 \\
+		b^2 &amp;= (r_0 + r_2)^2 + -(r_0 + d_0)^2 \\
+		b^2 &amp;= (r_1 + r_2)^2 + -(r_1 + d_1)^2 \\
+	\\
+		(r_0 + r_2)^2 + -(r_0 + d_0)^2 &amp;= (r_1 + r_2)^2 + -(r_1 + d_1)^2 &amp;
+		\text{calc r2} \\
+		2r_0r_2 + -2r_0d_0 + -d_0^2 &amp;= 2r_1r_2 + -2r_1d_1 + -d_1^2 \\
+		2r_0r_2 + -2r_1r_2 + -2r_0d_0 + -d_0^2 &amp;= -2r_1d_1 + -d_1^2 \\
+		2r_0r_2 + -2r_1r_2 &amp;= -2r_1d_1 + -d_1^2 + 2r_0d_0 + d_0^2 \\
+		2r_2(r_0 - r_1) &amp;= -2r_1d_1 + -d_1^2 + 2r_0d_0 + d_0^2 \\
+		r_2 &amp;= \frac{2r_0d_0 + -2r_1d_1 + d_0^2 + -d_1^2}{2(r_0 - r_1)} \\
+	\\
+		\hat{n}_0 &amp;= \frac{\vec{v}_0}{\|\vec{v}_0\|} &amp;
+		\text{normalize v0} \\
+	\\
+		\cos{\theta} &amp;= \frac{r_0 + d_0}{r_0 + r_2} \\
+		\sin{\theta} &amp;= \frac{\sqrt{(r_0 + r_2)^2 - (r_0 + d_0)^2}}{r_0 + r_2} \\
+	\\
+		\vec{v}_1 &amp;= \begin{bmatrix}
+			\cos{\theta} &amp; -\sin{\theta} \\
+			\sin{\theta} &amp;  \cos{\theta}
+		\end{bmatrix} \hat{n}_0 &amp;
+		\text{calc v1} \\
+
+		\hat{n}_1 &amp;= \frac{\vec{v}_1}{\|\vec{v}_1\|} &amp; 
+		\text{normalize v1} \\
+	\\
+		p_2 &amp;= p_0 + (r_0 + r_2)\hat{n}_1 &amp;
+		\text{calc p2} \\
+	\\
+		\vec{v}_2 &amp;= -(p_2 - (p_0 + \hat{n}_0(r_0 + d_0))) &amp;
+		\text{calc v2} \\
+
+		\hat{n}_2 &amp;= \frac{\vec{v}_2}{\|\vec{v}_2\|} &amp;
+		\text{normalize v2} \\
+	\\
+		p_3 &amp;= p_2 + r_2 * \hat{n}_2 &amp;
+		\text{calc p3}
+	\end{align*}
+			$$
+		</p>
+  </body>
+
+  <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js'></script>
+  <script type='text/javascript' src='script.js'></script>
+</html>
+
