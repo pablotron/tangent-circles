@@ -17,6 +17,12 @@
   <body>
     <h1>Tangent Circles</h1>
 
+    <p>
+      Solution to the tangent question circle from <a
+      href='https://www.reddit.com/r/gamedev/comments/8c1n60/finding_a_circle_tangent_to_two_circles_and_a/'>this
+      thread</a>.
+    </p>
+
 		<h2>Demo</h2>
 
     <canvas
@@ -51,6 +57,21 @@
 		<p>
 			<img src='math.svg' width='600'/>
 		</p>
+
+    <p>
+      Given two circles:
+    </p>
+
+    <ul>
+      <li>\(c_0\): Origin: \(p_0\), Radius: \(r_0\)</li>
+      <li>\(c_1\): Origin: \(p_1\), Radius: \(r_1\)</li>
+    </ul>
+
+    <p>
+      Calculate the vector \(\vec{v}_0\) between \(c_0\) and \(c_1\),
+      and the distances \(d_0\) and \(d_1\) between the edges of the
+      circles \(c_0\) and \(c_1\):
+    </p>
 		
 		<p>
 			$$
@@ -60,7 +81,20 @@
 	\\
 		d_0 &amp;= \frac{r_0}{r_0 + r_1} * (\|\vec{v}_0\| - (r_0 + r_1)) \\
 		d_1 &amp;= \frac{r_1}{r_0 + r_1} * (\|\vec{v}_0\| - (r_0 + r_1)) \\
-	\\
+	\end{align*}
+      $$
+    </p>
+
+    <p>
+      Use the <a
+      href='https://en.wikipedia.org/wiki/Pythagorean_theorem'>Pythagorean
+      Theorem</a> fact that the edge of the two right triangles is
+      shared to solve for the radius of the tangent circle \(r_2\):
+    </p>
+
+    <p>
+			$$
+	\begin{align*}
 		a^2 + b^2 &amp;= c^2 \\
 		b^2 &amp;= c^2 - a^2 \\
 		b^2 &amp;= (r_0 + r_2)^2 + -(r_0 + d_0)^2 \\
@@ -73,7 +107,44 @@
 		2r_0r_2 + -2r_1r_2 &amp;= -2r_1d_1 + -d_1^2 + 2r_0d_0 + d_0^2 \\
 		2r_2(r_0 - r_1) &amp;= -2r_1d_1 + -d_1^2 + 2r_0d_0 + d_0^2 \\
 		r_2 &amp;= \frac{2r_0d_0 + -2r_1d_1 + d_0^2 + -d_1^2}{2(r_0 - r_1)} \\
-	\\
+	\end{align*}
+      $$
+    </p>
+
+    <p>
+      Calculate \(\hat{n}_1\), the vector between \(p_0\) and \(p_2\),
+      by doing the following:
+    </p>
+
+    <ul>
+      <li>
+        Normalize the vector between \(p_0\) and \(p_1\) as
+        \(\hat{n}_0\)
+      </li>
+
+      <li>
+        Calculate \(\cos{\theta}\) and \(\sin{\theta}\)
+      </li>
+
+      <li>
+        Build a <a
+        href='https://en.wikipedia.org/wiki/Rotation_matrix'>rotation
+        matrix</a>
+      </li>
+
+      <li>
+        Multiply \(\vec{v}_0\) by the rotation matrix to
+        generate \(\vec{v}_1\)
+      </li>
+
+      <li>
+        Normalize \(\vec{v}_1\) to calculate \(\hat{n}_1\).
+      </li>
+    </ul>
+
+    <p>
+			$$
+	\begin{align*}
 		\hat{n}_0 &amp;= \frac{\vec{v}_0}{\|\vec{v}_0\|} &amp;
 		\text{normalize v0} \\
 	\\
@@ -86,23 +157,70 @@
 		\end{bmatrix} \hat{n}_0 &amp;
 		\text{calc v1} \\
 
-		\hat{n}_1 &amp;= \frac{\vec{v}_1}{\|\vec{v}_1\|} &amp; 
+		\hat{n}_1 &amp;= \frac{\vec{v}_1}{\|\vec{v}_1\|} &amp;
 		\text{normalize v1} \\
-	\\
+	\end{align*}
+      $$
+    </p>
+
+    <p>
+      Calculate \(p_2\) by starting at \(p_0\) and moving along the
+      vector \(\hat{n}_1\) a distance of \(r_0 + r_2\):
+    </p>
+
+    <p>
+			$$
+	\begin{align*}
 		p_2 &amp;= p_0 + (r_0 + r_2)\hat{n}_1 &amp;
 		\text{calc p2} \\
-	\\
+	\end{align*}
+      $$
+    </p>
+
+    <p>
+      Calculate the vector \(\hat{n}_2\) from \(p_2\) to \(p_3\):
+    </p>
+
+    <p>
+			$$
+	\begin{align*}
 		\vec{v}_2 &amp;= -(p_2 - (p_0 + \hat{n}_0(r_0 + d_0))) &amp;
 		\text{calc v2} \\
 
 		\hat{n}_2 &amp;= \frac{\vec{v}_2}{\|\vec{v}_2\|} &amp;
 		\text{normalize v2} \\
-	\\
-		p_3 &amp;= p_2 + r_2 * \hat{n}_2 &amp;
+	\end{align*}
+      $$
+    </p>
+
+    <p>
+      Start at \(p_2\) and move along \(\hat{n}_2\) a distance of
+      \(r_2\) to calculate \(p_3\):
+    </p>
+
+    <p>
+			$$
+	\begin{align*}
+		p_3 &amp;= p_2 + r_2\hat{n}_2 &amp;
 		\text{calc p3}
 	\end{align*}
 			$$
 		</p>
+
+    <p>
+      And you're done.  The relevant values are:
+    <p>
+
+    <ul>
+      <li>\(p_2\): Tangent Circle Origin</li>
+      <li>\(r_2\): Tangent Circle Radius</li>
+      <li>\(p_3\): Point on Tangent Circle</li>
+    </ul>
+
+    <p>
+      The source for this page is available here:
+      <a href='https://github.com/pablotron/tangent-circles'>https://github.com/pablotron/tangent-circles</a>
+    </p>
   </body>
 
   <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js'></script>

@@ -1,5 +1,3 @@
-function draw() {
-}
 jQuery(function($) {
   "use strict";
 
